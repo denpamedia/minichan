@@ -27,9 +27,11 @@ class Counter(Document):
 	last_id = IntField(default=0)
 	meta = {"db_alias": "b"}
 
+# Connect to board's DBs
 for board in board_list:
 	register_connection(board, board)
 
+# Make post counters to each board
 for board in board_list:
 	with switch_db(Counter, board) as myCounter:
 		myCounter(name='post_counter').save()

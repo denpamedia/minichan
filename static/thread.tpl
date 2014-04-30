@@ -47,7 +47,7 @@
           <p class="list-group-item-text">{{thread.body}}</p>
         </li>
       </ul>
-      <!--Thread list-->
+      <!--Reply list-->
       <ul class="list-group">
       %for reply in reply_list:
         <li class="list-group-item">
