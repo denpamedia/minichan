@@ -2,5 +2,6 @@
 
 from bottle import run
 from app import app
+from app.config import *
 
-app.run(host='localhost', port=8080, debug=True, reloader=True)
+app.run(host=HOST, port=PORT)

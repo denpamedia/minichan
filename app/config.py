@@ -1,3 +1,8 @@
+# Host where app connect
+HOST = 'localhost'
+
+# Port where app connect
+PORT = 8080
 
 # Number of Threads on board
 NUMBER_OF_THREADS = 5
