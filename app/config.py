@@ -5,10 +5,10 @@ HOST = 'localhost'
 PORT = 8080
 
 # Number of Threads on board
-NUMBER_OF_THREADS = 5
+NUMBER_OF_THREADS = 10
 
 # Maximum number of Reply Post on the Thread
-BUMP_LIMIT = 5
+BUMP_LIMIT = 20
 
 # List of Boards
 BOARD_LIST = {
