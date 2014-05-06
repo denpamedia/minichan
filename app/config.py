@@ -12,8 +12,8 @@ BUMP_LIMIT = 20
 
 # List of Boards
 BOARD_LIST = {
-	'b': 'Random',
-	'd': 'Board discussions'
+    'b': 'Random',
+    'd': 'Board discussions'
 }
 
 #NUMBER_OF_THREADS_ON_PAGE

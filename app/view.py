@@ -8,73 +8,73 @@ from app.config import *
 # Route for Original Posts list.
 @app.route('/<board>')
 def show_board(board):
-	'''Return board.tpl template and Original Posts data,
-	using get_original_posts_iter function from controller module.
+    '''Return board.tpl template and Original Posts data,
+    using get_original_posts_iter function from controller module.
 
-	If there are not such Board, return 404 Page.
+    If there are not such Board, return 404 Page.
 
-	'''
+    '''
 	
-	try:
-		original_posts_iter = get_original_posts_iter(board=board)
+    try:
+        original_posts_iter = get_original_posts_iter(board=board)
 
-		return template('app/static/board.tpl', board=board, bump_limit=BUMP_LIMIT,
-			board_list=BOARD_LIST, original_posts_iter=original_posts_iter)
-	except:
-		return abort(404, 'This page does not exist')
+        return template('app/static/board.tpl', board=board, bump_limit=BUMP_LIMIT,
+            board_list=BOARD_LIST, original_posts_iter=original_posts_iter)
+    except:
+        return abort(404, 'This page does not exist')
 
 
 # Route for Reply Posts list.
 @app.route('/<board>/<thread>')
 def show_thread(board, thread):
-	'''Return thread.tpl template and also Original Post and it's Reply Posts data,
-	using get_original_post and get_reply_posts_iter functions from controller module.
+    '''Return thread.tpl template and also Original Post and it's Reply Posts data,
+    using get_original_post and get_reply_posts_iter functions from controller module.
 
-	If there are not such Board or Original Post or Reply Posts, return 404 Page.
+    If there are not such Board or Original Post or Reply Posts, return 404 Page.
 
-	'''
+    '''
 
-	try:
-		original_post = get_original_post(board=board, original_post_id=thread)
-		reply_posts_iter = get_reply_posts_iter(board=board, original_post_id=thread)
+    try:
+        original_post = get_original_post(board=board, original_post_id=thread)
+        reply_posts_iter = get_reply_posts_iter(board=board, original_post_id=thread)
 
-		return template('app/static/thread.tpl', thread=thread, board=board, bump_limit=BUMP_LIMIT,
-			board_list=config.BOARD_LIST, original_post=original_post, reply_posts_iter=reply_posts_iter)
-	except:
-		return abort(404, 'This page does not exist')
+        return template('app/static/thread.tpl', thread=thread, board=board, bump_limit=BUMP_LIMIT,
+            board_list=config.BOARD_LIST, original_post=original_post, reply_posts_iter=reply_posts_iter)
+    except:
+        return abort(404, 'This page does not exist')
 
 
 # Route for make new Original Post. Use POST method.
 @app.post('/<board>')
 def make_thread(board):
-	'''Get posting form data.
-	Then use set_original_post function from controller module to make new Original Post.
+    '''Get posting form data.
+    Then use set_original_post function from controller module to make new Original Post.
 
-	'''
+    '''
 	
-	subject = request.forms.getunicode('subject')
-	body = request.forms.getunicode('body')
+    subject = request.forms.getunicode('subject')
+    body = request.forms.getunicode('body')
 
-	set_original_post(board=board, subject=subject, body=body)
+    set_original_post(board=board, subject=subject, body=body)
 
-	redirect('/' + board)
+    redirect('/' + board)
 
 
 # Route for make new Reply Post. Use POST method.
 @app.post('/<board>/<thread>')
 
 def make_reply(board, thread):
-	'''Get posting form data.
-	Then use set_reply_post function from controller module to make new Reply Post.	
+    '''Get posting form data.
+    Then use set_reply_post function from controller module to make new Reply Post.	
 
-	'''
+    '''
 
-	subject = request.forms.getunicode('subject')
-	body = request.forms.getunicode('body')
+    subject = request.forms.getunicode('subject')
+    body = request.forms.getunicode('body')
 
-	set_reply_post(board=board, original_post_id=thread, subject=subject, body=body)
+    set_reply_post(board=board, original_post_id=thread, subject=subject, body=body)
 
-	redirect('/' + board + '/' + thread)
+    redirect('/' + board + '/' + thread)
 
 
 
