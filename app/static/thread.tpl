@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Minichan/{{board}}/{{thread_number}}</title>
+  <title>&gt;&gt;{{thread}}</title>
   <link href="/static/css/bootstrap.min.css" rel="stylesheet">
   <link href="/static/css/mystyle.css" rel="stylesheet">
   <script src='/static/js/jquery.js'></script>
+  <script src='/static/js/bootstrap.min.js'></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
@@ -14,7 +15,7 @@
     <div class="col-md-4">
       <br>
       <!--Posting form-->
-      <form action="/{{board}}/{{thread_number}}" method="post" class="form" role="form">
+      <form action="/{{board}}/{{thread}}" method="post" class="form" role="form">
         <div class="input-group">
           <input type="text" name="subject" class="form-control" maxlength="50" placeholder="Subject">
             <span class="input-group-btn">
@@ -43,13 +44,17 @@
       <br>
       <ul class="list-group">
         <li class="list-group-item list-group-item-info">
-          <h5 class="list-group-item-heading"><strong>{{thread.subject}}</strong><small> {{thread.creation_time}}</small><a name="{{thread.post_id}}" href="{{thread.post_id}}" data-text="&gt;&gt;{{thread.post_id}}" class="pull-right">&gt;&gt;{{thread.post_id}}</a></h5>
-          <p class="list-group-item-text">{{thread.body}}</p>
+          <h5 class="list-group-item-heading"><strong>
+          %if original_post.bump_counter >= bump_limit:
+              <span class="label label-danger">Bump limit</span>
+          %end
+          {{original_post.subject}}</strong><small> {{original_post.creation_time}}</small><a name="{{original_post.post_id}}" href="{{original_post.post_id}}" data-text="&gt;&gt;{{original_post.post_id}}" class="pull-right">&gt;&gt;{{original_post.post_id}}</a></h5>
+          <p class="list-group-item-text">{{original_post.body}}</p>
         </li>
       </ul>
       <!--Reply list-->
       <ul class="list-group">
-      %for reply in reply_list:
+      %for reply in reply_posts_iter:
         <li class="list-group-item">
           <h5 class="list-group-item-heading"><strong>{{reply.subject}}</strong><small> {{reply.creation_time}}</small><a name="{{reply.post_id}}" href="" data-text="&gt;&gt;{{reply.post_id}}" class="pull-right">&gt;&gt;{{reply.post_id}}</a></h5>
           <p class="list-group-item-text">
@@ -74,7 +79,7 @@
 
   <script>$("a[data-text]").click(function(){
   var value = $("#body").val();
-   $("#body").val(value+$(this).attr("data-text"));
+   $("#body").val(value+" "+$(this).attr("data-text"));
    return false;
 })</script>
 </body>

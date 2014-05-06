@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Minichan/{{board}}</title>
+  <title>{{board_list[board]}}</title>
   <link href="/static/css/bootstrap.min.css" rel="stylesheet">
   <link href="/static/css/mystyle.css" rel="stylesheet">
   <script src='/static/js/jquery.js'></script>
@@ -42,18 +42,24 @@
       <!--End of board list-->
       <br>
       <!--Thread list-->
-      %for thread in thread_list:
+      %for original_post in original_posts_iter:
       <div class="list-group">
-        <a href="/{{board}}/{{thread.post_id}}" class="list-group-item list-group-item-info">
-          <h5 class="list-group-item-heading"><strong><span class="badge">{{thread.bump_counter}}</span> {{thread.subject}}</strong><small> {{thread.creation_time}}</small><span class="pull-right">&gt;&gt;{{thread.post_id}}</span></h5>
+        <a href="/{{board}}/{{original_post.post_id}}" class="list-group-item list-group-item-info">
+          <h5 class="list-group-item-heading"><strong>
+          %if original_post.bump_counter >= bump_limit:
+              <span class="label label-danger">Bump limit</span>
+          %else:
+              <span class="badge">{{original_post.bump_counter}}</span>
+          %end
+          {{original_post.subject}}</strong><small> {{original_post.creation_time}}</small><span class="pull-right">&gt;&gt;{{original_post.post_id}}</span></h5>
           <p class="list-group-item-text">
-          %if len(thread.body) >= 1000:
-              %for string in thread.body[:1000].split('\n'):
+          %if len(original_post.body) >= 1000:
+              %for string in original_post.body[:1000].split('\n'):
                   {{string}}<br>
               %end
               [...]
           %else:
-              %for string in thread.body.split('\n'):
+              %for string in original_post.body.split('\n'):
                   {{string}}<br>
               %end
           %end
