@@ -2,10 +2,8 @@
 <html>
 <head>
   <title>&gt;&gt;{{thread}}</title>
-  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/css/mystyle.css" rel="stylesheet">
-  <script src='/static/js/jquery.js'></script>
-  <script src='/static/js/bootstrap.min.js'></script>
+  <link href="{{css_assets}}" rel="stylesheet">
+  <script src='{{js_assets}}'></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
