@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>&gt;&gt;{{thread}}</title>
+  <title>      
+      %if original_post["subject"]:
+        #{{thread}}: {{original_post["subject"]}} 
+      %else:
+        #{{thread}} 
+      %end
+  </title>
   <link href="{{css_assets}}" rel="stylesheet">
   <script src='{{js_assets}}'></script>
   <meta charset="UTF-8">
