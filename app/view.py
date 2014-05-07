@@ -78,7 +78,6 @@ def make_thread(board):
 
 # Route for make new Reply Post. Use POST method.
 @app.post('/<board>/<thread>')
-
 def make_reply(board, thread):
     '''Get posting form data.
     Then use set_reply_post function from controller module to make new Reply Post.	

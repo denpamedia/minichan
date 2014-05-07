@@ -12,7 +12,7 @@ class Post(Document):
     '''
 
     subject = StringField(max_length=50)
-    body = StringField(max_length=3000, required=True)
+    body = StringField(max_length=10000, required=True)
     creation_time = StringField(required=True)
     post_id = LongField(required=True)
 
