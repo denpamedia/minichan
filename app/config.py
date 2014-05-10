@@ -13,5 +13,6 @@ BUMP_LIMIT = 5
 # List of Boards
 BOARD_LIST = {
     'b': 'Random',
-    'd': 'Board discussions'
+    'd': 'Board discussions',
+    'test': 'testing'
 }
