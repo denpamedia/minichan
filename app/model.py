@@ -1,4 +1,3 @@
-#model
 import time
 import datetime
 
@@ -11,10 +10,11 @@ class Post(Document):
 
     '''
 
+    post_id = LongField(required=True)
     subject = StringField(max_length=50)
     body = StringField(max_length=10000, required=True)
     creation_time = StringField(required=True)
-    post_id = LongField(required=True)
+
 
     meta = {'allow_inheritance': True}
 
@@ -28,10 +28,16 @@ class OriginalPost(Post):
 
     bump_time = FloatField(required=True)
     bump_counter = IntField(default=0, required=True)
+    bump_limit = BooleanField(default=False)
 
     @queryset_manager
-    def objects(doc_cls, queryset):
+    def get_all(doc_cls, queryset):
         '''Method return list of Original Posts of board, sorted by bump time.'''
+        return queryset.order_by('bump_time')
+
+    @queryset_manager
+    def get_all_reverse(doc_cls, queryset):
+        '''Method return list of Original Posts of board, sorted by bump time reversed.'''
         return queryset.order_by('-bump_time')
 
     meta = {"db_alias": "b"}

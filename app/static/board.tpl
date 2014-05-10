@@ -1,7 +1,9 @@
+%from app.config import *
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>{{board_list[board]}}</title>
+  <title>{{BOARD_LIST[board_dict['board']]}}</title>
   <link href="{{css_assets}}" rel="stylesheet">
   <script src='{{js_assets}}'></script>
   <meta charset="UTF-8">
@@ -13,7 +15,7 @@
     <div class="col-md-4">
       <br>
       <!--Posting form-->
-      <form action="/{{board}}" method="post" class="form" role="form">
+          <form action="/{{board_dict['board']}}" method="post" class="form" role="form">
         <div class="input-group">
           <input type="text" name="subject" class="form-control" maxlength="50" placeholder="Subject">
             <span class="input-group-btn">
@@ -28,11 +30,11 @@
       <!--Board list-->
       <div class="list-group">
         <label>Boards</label>
-        %for my_board in sorted(board_list):
-            %if my_board == board:
-                <a href="/{{my_board}}" class="list-group-item active">{{board_list[my_board]}}</a>
+        %for my_board in sorted(BOARD_LIST):
+            %if my_board == board_dict['board']:
+                <a href="/{{my_board}}" class="list-group-item active">{{BOARD_LIST[my_board]}}</a>
             %else:
-                <a href="/{{my_board}}" class="list-group-item">{{board_list[my_board]}}</a>
+                <a href="/{{my_board}}" class="list-group-item">{{BOARD_LIST[my_board]}}</a>
             %end
         %end
       </div>
@@ -41,24 +43,24 @@
       <!--End of board list-->
       <br>
       <!--Thread list-->
-      %for original_post in original_posts_iter:
+      %for thread in board_dict['thread_list']:
       <div class="list-group">
-        <a href="/{{board}}/{{original_post.post_id}}" class="list-group-item list-group-item-info">
+        <a href="/{{board_dict['board']}}/{{thread['post_id']}}" class="list-group-item list-group-item-info">
           <h5 class="list-group-item-heading"><strong>
-          %if original_post.bump_counter >= bump_limit:
+          %if thread['bump_limit'] == True:
               <span class="label label-danger">Bump limit</span>
           %else:
-              <span class="badge">{{original_post.bump_counter}}</span>
+              <span class="badge">{{thread['bump_counter']}}</span>
           %end
-          {{original_post.subject}}</strong><small> {{original_post.creation_time}}</small><span class="pull-right">&gt;&gt;{{original_post.post_id}}</span></h5>
+          {{thread['subject']}}</strong><small> {{thread['creation_time']}}</small><span class="pull-right">&gt;&gt;{{thread['post_id']}}</span></h5>
           <p class="list-group-item-text">
-          %if len(original_post.body) >= 1000:
-              %for string in original_post.body[:1000].split('\n'):
+          %if len(thread['body']) >= 1000:
+              %for string in thread['body'][:1000].split('\n'):
                   {{string}}<br>
               %end
               [...]
           %else:
-              %for string in original_post.body.split('\n'):
+              %for string in thread['body'].split('\n'):
                   {{string}}<br>
               %end
           %end
