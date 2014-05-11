@@ -18,19 +18,28 @@ css = Bundle('css/mystyle.css','css/bootstrap.min.css', output='gen/packed.css')
 env.register('css_all', css)
 
 
-
-
 @app.route('/<board>')
 @app.route('/<board>/')
 def show_board(board):
-    board_dict = get_board(board=board)
+    board_json = get_board(board=board)
 
-    return template('app/static/board.tpl', board_dict=board_dict,
+    return template('app/static/board.tpl', board_json=board_json,
         js_assets=env['js_all'].urls()[0], css_assets=env['css_all'].urls()[0])
 
 
+@app.route('/<board>/<thread>')
+@app.route('/<board>/<thread>/')
+def show_thread(board, thread):
+    thread_json = get_thread(board=board, thread=thread)
+    
+    return template('app/static/thread.tpl', thread_json=thread_json,
+        js_assets=env['js_all'].urls()[0], css_assets=env['css_all'].urls()[0])
+
+
+
+
 @app.post('/<board>')
-@app.post('/<board>')
+@app.post('/<board>/')
 def make_thread(board):
     subject = request.forms.getunicode('subject')
     body = request.forms.getunicode('body')
@@ -38,17 +47,6 @@ def make_thread(board):
     set_thread(board=board, subject=subject, body=body)
 
     redirect('/' + board)
-
-
-
-
-@app.route('/<board>/<thread>')
-@app.route('/<board>/<thread>/')
-def show_thread(board, thread):
-    thread_dict = get_thread(board=board, thread=thread)
-    
-    return template('app/static/thread.tpl', thread_dict=thread_dict,
-        js_assets=env['js_all'].urls()[0], css_assets=env['css_all'].urls()[0])
 
 
 @app.post('/<board>/<thread>')
@@ -66,7 +64,7 @@ def make_reply(board, thread):
 
 # Routes for CSS and JavaScript static files
 @app.route('/static/gen/packed.css')
-def callback2():
+def callback():
     return static_file('packed.css', root='app/static/gen')
 
 

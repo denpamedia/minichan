@@ -1,10 +1,15 @@
 from time import time
 from datetime import datetime
+import json
 
 from mongoengine.context_managers import switch_db
 
 from app import model
 from app import config
+
+
+def get_board_list():
+    return json.dumps(config.BOARD_LIST)
 
 
 def get_board(board):
@@ -14,23 +19,26 @@ def get_board(board):
             del thread['_id']
             del thread['_cls']
 
-    return dict(board=board, thread_list=thread_list)
+    return json.dumps({"board": board, "thread_list": thread_list})
 
 
 def get_thread(board, thread):
     with switch_db(model.OriginalPost, board) as OriginalPost:
         original_post = OriginalPost.objects(post_id=thread)[0]
         original_post_dict = dict(original_post.to_mongo())
-        del original_post_dict['_id']
-        del original_post_dict['_cls']
 
     with switch_db(model.ReplyPost, board) as ReplyPost:
         reply_list = [dict(reply.to_mongo()) for reply in ReplyPost.objects(original_post_link=original_post)]
-        for reply in reply_list:
-            del reply['_id']
-            del reply['_cls']
+        
+    del original_post_dict['_id']
+    del original_post_dict['_cls']
 
-    return dict(board=board, thread=thread, original_post_dict=original_post_dict, reply_list=reply_list)
+    for reply in reply_list:
+        del reply['_id']
+        del reply['_cls']
+        del reply['original_post_link']
+
+    return json.dumps({"board": board, "thread": thread, "original_post_dict": original_post_dict, "reply_list": reply_list})
 
 
 
@@ -66,4 +74,4 @@ def set_reply(board, thread, subject, body):
 def next_counter(board):
     with switch_db(model.Counter, board) as Counter:
         Counter.objects(name='post_counter').update_one(inc__next_id=1)
-        return [counter for counter in Counter.objects][0].next_id
+    return [counter for counter in Counter.objects][0].next_id

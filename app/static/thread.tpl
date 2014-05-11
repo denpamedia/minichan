@@ -1,4 +1,7 @@
 %from app.config import *
+%import json
+
+%thread_dict = json.loads(thread_json)
 
 <!DOCTYPE html>
 <html>

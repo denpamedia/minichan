@@ -1,4 +1,7 @@
 %from app.config import *
+%import json
+
+%board_dict = json.loads(board_json)
 
 <!DOCTYPE html>
 <html>
