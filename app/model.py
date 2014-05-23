@@ -1,62 +1,46 @@
-import time
-import datetime
-
 from mongoengine import *
-from mongoengine.context_managers import switch_db
 
 
 class Post(Document):
-    '''Post superclass.
-
-    '''
-
     post_id = LongField(required=True)
-    subject = StringField(max_length=50)
-    body = StringField(max_length=10000, required=True)
     creation_time = StringField(required=True)
-
+    body = StringField(max_length=6000, required=True)
+    image_uri = StringField()
+    thumb_uri = StringField()
 
     meta = {'allow_inheritance': True}
 
 
-class OriginalPost(Post):
-    '''Original Post class.
-    bump_time is the time, when was posted last Reply for Original Post.
-    bump_counter is the counter of Replies, that were posted on Thread.
-
-    '''
-
-    bump_time = FloatField(required=True)
+class Thread(Post):
+    last_bump_time = IntField(required=True)
     bump_counter = IntField(default=0, required=True)
-    bump_limit = BooleanField(default=False)
+    bump_limit = BooleanField(default=False, required=True)
 
     @queryset_manager
-    def get_all(doc_cls, queryset):
-        '''Method return list of Original Posts of board, sorted by bump time.'''
-        return queryset.order_by('bump_time')
+    def all(doc_cls, queryset):
+        return [dict(x.to_mongo()) for x in queryset.order_by('-last_bump_time').only('post_id', 'creation_time',
+            'body', 'image_uri', 'thumb_uri', 'last_bump_time', 'bump_counter', 'bump_limit')]
 
     @queryset_manager
-    def get_all_reverse(doc_cls, queryset):
-        '''Method return list of Original Posts of board, sorted by bump time reversed.'''
-        return queryset.order_by('-bump_time')
-
-    meta = {"db_alias": "b"}
+    def oldest(doc_cls, queryset):
+        return queryset.order_by('last_bump_time')[0]
 
 
-class ReplyPost(Post):
-    '''Field with link to OriginalPost instance.
-    reverse_delete_rule=CASCADE means, that after deleting of Original Post,
-    linked Reply Posts will be delete too.
+class Reply(Post):
+    thread_link = ReferenceField(Thread, reverse_delete_rule=CASCADE, required=True)
 
-    '''
+    @queryset_manager
+    def all(doc_cls, queryset):
+        return queryset.order_by('creation_time').only('post_id', 'creation_time',
+            'body', 'image_uri', 'thumb_uri')
 
-    original_post_link = ReferenceField(OriginalPost, reverse_delete_rule=CASCADE)
 
-    meta = {"db_alias": "b"}
+class Image(Document):
+    img_id = StringField(required=True)
+    img_src = ImageField(thumbnail_size=(300, 250, True), required=True)
+    post_link = ReferenceField(Post, reverse_delete_rule=CASCADE, required=True)
 
 
 class Counter(Document):
     name = StringField()
     next_id = IntField(default=0)
-
-    meta = {"db_alias": "b"}

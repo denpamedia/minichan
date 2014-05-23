@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/ministyle.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="static/jquery.autosize.min.js"></script>
+    <title>&gt;&gt;{{data["original_post"]["post_id"]}}</title>
+</head>
+<body>
+<div class="octo"><a class="gray" href="https://github.com/a-stringfield/minichan" target="blanc" title="GitHub"><i class="fa fa-github-alt fa-3x"></i></a></div>
+<br>
+<div class="pure-g-r">
+	<div class="pure-u-1-3"></div>
+	<div class="pure-u-1-3">
+	<form action="/{{data["original_post"]["post_id"]}}" method="post" enctype="multipart/form-data">
+		<textarea type="text" name="body" rows="6" maxlength="3000" required></textarea>
+		<div class="pure-g-r">
+		<div class="pure-u-1-2">
+			<div class="file-input-wrapper">
+			<button class="pure-button">Upload image</button>
+			<input type="file" name="image" required/>
+			</div>
+		</div>
+		<div class="pure-u-1-2"><button class="pure-button pure-button-primary" type="submit">Submit</button></div>
+		</div>
+	</form>
+	</div>
+</div>
+<br><br>
+<div class="pure-g-r">
+	<div class="pure-u-1-5"></div>
+	<div class="pure-u-3-5">
+		<div class="pure-g-r post-panel">
+			<div class="pure-u-10-24"><a href="{{data["original_post"]["image_uri"]}}" target="_blank"><img src="{{data["original_post"]["thumb_uri"]}}" class="post-img"></a></div>
+			<div class="pure-u-14-24 kukuku">
+			<div class="post-header"><i class="fa fa-clock-o"></i> {{data["original_post"]["creation_time"]}}<span class="pull-right">&gt;&gt;{{data["original_post"]["post_id"]}}</span></div>
+			<p class="post-text">{{data["original_post"]["body"]}}</p>
+			<div class="post-bottom">
+			<div class="bottom-left"><i class="fa fa-comment"></i> {{data["original_post"]["bump_counter"]}} comments</div>
+			</div>
+			</div>
+		</div>
+		{% if "reply_list" in data: %}
+		{% if data["reply_list"]|length == 1: %}
+		<div class="pure-g-r post-panel">
+			<div class="pure-u-10-24"><a href="{{data["reply_list"][0]["image_uri"]}}" target="_blank"><img src="{{data["reply_list"][0]["thumb_uri"]}}" class="post-img"></a></div>
+			<div class="pure-u-14-24 kukuku">
+			<div class="post-header"><i class="fa fa-clock-o"></i> {{data["reply_list"][0]["creation_time"]}}<span class="pull-right">&gt;&gt;{{data["reply_list"][0]["post_id"]}}</span></div>
+			<p class="post-text">{{data["reply_list"][0]["body"]}}</p>
+			</div>
+		</div>
+		{% endif %}
+		{% if data["reply_list"]|length == 2: %}
+		<div class="pure-g-r reply-panel-first">
+			<div class="pure-u-10-24"><a href="{{data["reply_list"][0]["image_uri"]}}" target="_blank"><img src="{{data["reply_list"][0]["thumb_uri"]}}" class="post-img"></a></div>
+			<div class="pure-u-14-24 kukuku">
+			<div class="post-header"><i class="fa fa-clock-o"></i> {{data["reply_list"][0]["creation_time"]}}<span class="pull-right">&gt;&gt;{{data["reply_list"][0]["post_id"]}}</span></div>
+			<p class="post-text">{{data["reply_list"][0]["body"]}}</p>
+			</div>
+		</div>
+		<div class="pure-g-r reply-panel-last">
+			<div class="pure-u-10-24"><a href="{{data["reply_list"][1]["image_uri"]}}" target="_blank"><img src="{{data["reply_list"][1]["thumb_uri"]}}" class="post-img"></a></div>
+			<div class="pure-u-14-24 kukuku">
+			<div class="post-header"><i class="fa fa-clock-o"></i> {{data["reply_list"][1]["creation_time"]}}<span class="pull-right">&gt;&gt;{{data["reply_list"][1]["post_id"]}}</span></div>
+			<p class="post-text">{{data["reply_list"][1]["body"]}}</p>
+			</div>
+		</div>
+		{% endif %}
+		{% if data["reply_list"]|length > 2: %}
+		<div class="pure-g-r reply-panel-first">
+			<div class="pure-u-10-24"><a href="{{data["reply_list"][0]["image_uri"]}}" target="_blank"><img src="{{data["reply_list"][0]["thumb_uri"]}}" class="post-img"></a></div>
+			<div class="pure-u-14-24 kukuku">
+			<div class="post-header"><i class="fa fa-clock-o"></i> {{data["reply_list"][0]["creation_time"]}}<span class="pull-right">&gt;&gt;{{data["reply_list"][0]["post_id"]}}</span></div>
+			<p class="post-text">{{data["reply_list"][0]["body"]}}</p>
+			</div>
+		</div>
+		{% for reply in data["reply_list"][1:-1]: %}
+		<div class="pure-g-r reply-panel">
+			<div class="pure-u-10-24"><a href="{{reply["image_uri"]}}" target="_blank"><img src="{{reply["thumb_uri"]}}" class="post-img"></a></div>
+			<div class="pure-u-14-24 kukuku">
+			<div class="post-header"><i class="fa fa-clock-o"></i> {{reply["creation_time"]}}<span class="pull-right">&gt;&gt;{{reply["post_id"]}}</span></div>
+			<p class="post-text">{{reply["body"]}}</p>
+			</div>
+		</div>
+		{% endfor %}
+		<div class="pure-g-r reply-panel-last">
+			<div class="pure-u-10-24"><a href="{{data["reply_list"][-1]["image_uri"]}}" target="_blank"><img src="{{data["reply_list"][-1]["thumb_uri"]}}" class="post-img"></a></div>
+			<div class="pure-u-14-24 kukuku">
+			<div class="post-header"><i class="fa fa-clock-o"></i> {{data["reply_list"][-1]["creation_time"]}}<span class="pull-right">&gt;&gt;{{data["reply_list"][-1]["post_id"]}}</span></div>
+			<p class="post-text">{{data["reply_list"][-1]["body"]}}</p>
+			</div>
+		</div>
+		{% endif %}
+		{% endif %}
+	</div>
+	<div class="pure-u-1-5"></div>
+</div>
+<br>
+<script type="text/javascript">
+	$(document).ready(function(){
+    $('textarea').autosize();   
+});
+</script>
+</body>
+</html>
+

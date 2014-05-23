@@ -1,77 +1,69 @@
 from time import time
 from datetime import datetime
-import json
-
-from mongoengine.context_managers import switch_db
+import hashlib
 
 from app import model
 from app import config
 
 
-def get_board_list():
-    return json.dumps(config.BOARD_LIST)
+def get_board():
+    return model.Thread.all_threads
 
 
-def get_board(board):
-    with switch_db(model.OriginalPost, board) as OriginalPost:
-        thread_list = [dict(post.to_mongo()) for post in OriginalPost.get_all_reverse]
-        for thread in thread_list:
-            del thread['_id']
-            del thread['_cls']
-
-    return json.dumps({"board": board, "thread_list": thread_list})
+def get_thread(thread_id):
+    return {
+    "original_post": dict(model.Thread.objects(post_id=thread_id)[0].to_mongo()),
+    "reply_list": [dict(reply.to_mongo()) for reply in model.Reply.all(thread_link=model.Thread.objects(post_id=thread_id)[0])]
+    }
 
 
-def get_thread(board, thread):
-    with switch_db(model.OriginalPost, board) as OriginalPost:
-        original_post = OriginalPost.objects(post_id=thread)[0]
-        original_post_dict = dict(original_post.to_mongo())
+def make_new_thread(body, image):
+    if model.Thread.objects.count() >= config.NUMBER_OF_THREADS:
+        model.Thread.oldest.delete()
 
-    with switch_db(model.ReplyPost, board) as ReplyPost:
-        reply_list = [dict(reply.to_mongo()) for reply in ReplyPost.objects(original_post_link=original_post)]
-        
-    del original_post_dict['_id']
-    del original_post_dict['_cls']
+    img = model.Image()
+    img.img_src.put(image)
+    img.img_id = str(hashlib.md5(img.img_src.read()).hexdigest())
 
-    for reply in reply_list:
-        del reply['_id']
-        del reply['_cls']
-        del reply['original_post_link']
+    original_post = model.Thread()
+    original_post.post_id = next_counter()
+    original_post.creation_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+    original_post.body = body
+    original_post.image_uri = 'http://localhost:5000/image/{0}'.format(img.img_id)
+    original_post.thumb_uri = 'http://localhost:5000/thumb/{0}'.format(img.img_id)
+    original_post.last_bump_time = time()
+    original_post.save()
 
-    return json.dumps({"board": board, "thread": thread, "original_post_dict": original_post_dict, "reply_list": reply_list})
-
-
-
-
-def set_thread(board, subject, body):
-    with switch_db(model.OriginalPost, board) as OriginalPost:
-        creation_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
-        bump_time = time()
-        post_id = next_counter(board=board)
-        if OriginalPost.objects.count() >= config.NUMBER_OF_THREADS:
-            OriginalPost.get_all[0].delete()
-        OriginalPost(post_id=post_id, creation_time=creation_time, bump_time=bump_time, body=body, subject=subject).save()
+    img.post_link = original_post
+    img.save()
 
 
-def set_reply(board, thread, subject, body):
-    creation_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
-    post_id = next_counter(board=board)
+def make_new_reply(thread_id, image, body):
+    original_post = model.Thread.objects(post_id=thread_id)[0]
+    original_post.update(inc__bump_counter=1)
 
-    with switch_db(model.OriginalPost, board) as OriginalPost:
-        original_post = OriginalPost.objects(post_id=thread)[0]
-        original_post.update(inc__bump_counter=1)
+    if original_post.bump_counter >= config.BUMP_LIMIT:
+        original_post.update(set__bump_limit=True)
+    else:
+        original_post.update(set__last_bump_time=time())
 
-        if original_post.bump_counter >= config.BUMP_LIMIT:
-            original_post.update(set__bump_limit=True)
-        else:
-            original_post.update(set__bump_time=time())
+    img = model.Image()
+    img.img_src.put(image)
+    img.img_id = str(hashlib.md5(img.img_src.read()).hexdigest())
 
-    with switch_db(model.ReplyPost, board) as ReplyPost:
-        ReplyPost(creation_time=creation_time, post_id=post_id, body=body, subject=subject, original_post_link=original_post).save()
+    reply_post = model.Reply()
+    reply_post.post_id = next_counter()
+    reply_post.creation_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+    reply_post.body = body
+    reply_post.image_uri = 'http://localhost:5000/image/{0}'.format(img.img_id)
+    reply_post.thumb_uri = 'http://localhost:5000/thumb/{0}'.format(img.img_id)
+    reply_post.thread_link = original_post
+    reply_post.save()
+
+    img.post_link = reply_post
+    img.save()
 
 
-
-def next_counter(board):
-    with switch_db(model.Counter, board) as Counter:
-        Counter.objects(name='post_counter').update_one(inc__next_id=1)
-    return [counter for counter in Counter.objects][0].next_id
+def next_counter():
+    model.Counter.objects(name='post_counter').update_one(inc__next_id=1)
+    return model.Counter.objects[0].next_id

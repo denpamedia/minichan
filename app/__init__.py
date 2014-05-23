@@ -1,21 +1,18 @@
-from bottle import Bottle
+from json import loads
+
+from flask import Flask
+from mongoengine import *
 
 from app.config import *
 from app.model import *
 
 
-# Connect to board's DBs
-for board in BOARD_LIST:
-    register_connection(board, board)
+connect("b_test")
 
+Counter(name='post_counter').save()
 
-# Make or connect post counters for each board
-for board in BOARD_LIST:
-    with switch_db(Counter, board) as myCounter:
-        myCounter(name='post_counter').save()
+minichan = Flask(__name__)
 
+minichan.jinja_env.globals.update(loads=loads)
 
-app = Bottle()
-
-
-from app import view
+import app.view

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css">
+    body{background-color: #f5f5f5}
+    </style>
+    <meta charset="UTF-8">
+    {% if "original_post" not in data: %}
+    <title>Minichan</title>
+    {% endif %}
+    {% if "original_post" in data: %}
+        {% if data["original_post"]["subject"]: %}
+        <title>{{data["original_post"]["subject"]}}</title>
+        {% endif %}
+        {% if not data["original_post"]["subject"]: %}
+        <title>&gt;&gt;{{data["original_post"]["post_id"]}}</title>
+        {% endif %}
+    {% endif %}
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<br>
+		{% if "original_post" not in data: %}
+      <form action="/" method="post" class="form" role="form" enctype="multipart/form-data">
+        {% endif %}
+        {% if "original_post" in data: %}
+      <form action="/{{data["original_post"]["post_id"]}}" method="post" class="form" role="form" enctype="multipart/form-data">
+        {% endif %}
+        <div class="input-group">
+          <input type="text" name="subject" class="form-control" maxlength="50" placeholder="Subject">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit">Submit</button>
+            </span>
+        </div>
+        <br>
+          <textarea type="text" name="body" class="form-control" maxlength="3000" rows="5" required></textarea>
+        <br>
+        {% if "original_post" not in data: %}
+        <input type="file" name="image" accept="image/jpeg,image/png,image/gif" required="required">
+        {% endif %}
+        {% if "original_post" in data: %}
+        <input type="file" name="image" accept="image/jpeg,image/png,image/gif">
+        {% endif %}
+      </form>
+      <br>
+
+			</div>
+			</div>
+
+			<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+			<br>
+			{% if "original_post" not in data: %}
+				{% if data: %}
+				    {% for thread in data: %}
+				        <ul class="list-group">
+				            <li class="list-group-item">
+				            	<div class="media">
+				            	    <a class="pull-left" href="{{thread["image_uri"]}}" target="_blank">
+				            	        <img class="media-object" src="{{thread["thumb_uri"]}}">
+				            	    </a>
+				            	    <div class="media-body">
+				            	        <h4 class="media-heading">
+				            	        {% if thread["bump_limit"] == False: %}
+				            	        <span class="badge"> {{thread["bump_counter"]}}</span>
+				            	        {% endif %}
+				            	        {% if thread["bump_limit"] == True: %}
+				            	        <span class="label label-danger">Bump limit</span>
+				            	        {% endif %}
+				            	        {{thread["subject"]}} <small> {{thread["creation_time"]}} </small><font color="#428bca">[</font><a href="/{{thread["post_id"]}}">Reply</a><font color="#428bca">]</font><a href="/{{thread["post_id"]}}" class="pull-right">#{{thread["post_id"]}}</a></h4>
+				            	        {{thread["body"]}}
+				            	    </div>
+				            	</div>
+				            </li>
+				        </ul>
+				    {% endfor %}
+				{% endif %}
+			{% endif %}
+			{% if "original_post" in data: %}
+				        <ul class="list-group">
+				            <li class="list-group-item">
+				            	<div class="media">
+				            	    <a class="pull-left" href="{{data["original_post"]["image_uri"]}}" target="_blank">
+				            	        <img class="media-object" src="{{data["original_post"]["thumb_uri"]}}">
+				            	    </a>
+				            	    <div class="media-body">
+				            	        <h4 class="media-heading">
+				            	        {{data["original_post"]["subject"]}} <small> {{data["original_post"]["creation_time"]}} </small><a href="#" class="pull-right">&gt;&gt;{{data["original_post"]["post_id"]}}</a></h4>
+				            	        {{data["original_post"]["body"]}}
+				            	    </div>
+				            	</div>
+				            </li>
+				        </ul>
+				        {% if data["reply_list"]: %}
+				        <ul class="list-group">
+				            {% for reply in data["reply_list"]: %}
+				            <li class="list-group-item">
+				            	<div class="media">
+				            	    <a class="pull-left" href="{{reply["image_uri"]}}" target="_blank">
+				            	        <img class="media-object" src="{{reply["thumb_uri"]}}">
+				            	    </a>
+				            	    <div class="media-body">
+				            	        <h4 class="media-heading">
+				            	        {{reply["subject"]}} <small> {{reply["creation_time"]}} </small><a href="#" class="pull-right">&gt;&gt;{{reply["post_id"]}}</a></h4>
+				            	        {{reply["body"]}}
+				            	    </div>
+				            	</div>
+				            </li>
+				            {% endfor %}
+				        </ul>
+				        {% endif %}
+			{% endif %}
+			</div>
+		</div>
+	</div>
+</body>
+</html>
