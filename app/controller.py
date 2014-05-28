@@ -17,7 +17,7 @@ def get_thread(thread_id):
     }
 
 
-def make_new_thread(body, image):
+def make_new_thread(subject, body, image):
     if model.Thread.objects.count() >= config.NUMBER_OF_THREADS:
         model.Thread.oldest.delete()
 
@@ -29,8 +29,9 @@ def make_new_thread(body, image):
     original_post.post_id = next_counter()
     original_post.creation_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     original_post.body = body
-    original_post.image_uri = 'http://localhost:5000/image/{0}'.format(img.img_id)
-    original_post.thumb_uri = 'http://localhost:5000/thumb/{0}'.format(img.img_id)
+    original_post.subject = subject
+    original_post.image_uri = '/image/{0}'.format(img.img_id)
+    original_post.thumb_uri = '/thumb/{0}'.format(img.img_id)
     original_post.last_bump_time = time()
     original_post.save()
 
@@ -55,8 +56,8 @@ def make_new_reply(thread_id, image, body):
     reply_post.post_id = next_counter()
     reply_post.creation_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     reply_post.body = body
-    reply_post.image_uri = 'http://localhost:5000/image/{0}'.format(img.img_id)
-    reply_post.thumb_uri = 'http://localhost:5000/thumb/{0}'.format(img.img_id)
+    reply_post.image_uri = '/image/{0}'.format(img.img_id)
+    reply_post.thumb_uri = '/thumb/{0}'.format(img.img_id)
     reply_post.thread_link = original_post
     reply_post.save()
 
