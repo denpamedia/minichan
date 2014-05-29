@@ -7,9 +7,7 @@ from app import model
 @minichan.route('/', methods=['GET', 'POST'])
 def board():
     if request.method == 'POST':
-        controller.make_new_thread(body=request.form['body'],
-            subject=request.form['subject'],
-            image=request.files['image'])
+        controller.make_new_thread(body=request.form['body'], image=request.files['image'])
         return redirect('/')
     else:
         return render_template('board.html', data=model.Thread.all)

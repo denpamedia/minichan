@@ -4,18 +4,19 @@
 	<title>Minichan</title>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="static/ministyle.css">
+	<link rel="stylesheet" href="static/ministyle-phone.css" />
+	<link rel="stylesheet" media="(min-width: 40.063em)" href="static/ministyle-tablet.css" />
+	<link rel="stylesheet" media="(min-width: 64.063em)" href="static/ministyle-desktop.css" />
 </head>
 <body>
 
 
 <!-- Posting form -->
 <form action="/" method="post" enctype="multipart/form-data" id="form">
-	<input type="text" class="input-subject" name="subject" maxlength="50" placeholder="Subject"></input>
-	<textarea type="text" rows="6" name="body" maxlength="3000" required></textarea>
+	<textarea type="text" rows="8" name="body" maxlength="3000" required></textarea>
 	<div class="button-group clear">
 		<input type="file" name="image" class="input-file" required/>
-		<button type="submit">Reply</button>
+		<button type="submit">Make thread</button>
 	</div>
 </form>
 <br><br>
@@ -28,14 +29,13 @@
 <article class="post clear">
 	<a href="{{thread["image_uri"]}}" target="_blank"><img class="image" src="{{thread["thumb_uri"]}}"></a>
 	<div class="text">
-		<h3 class="subject">{{thread["subject"]}}</h3>
-		<p class="par">{{thread["body"]}}</p>
+		<div class="menu header clear">
+			<span class="left">{{thread["creation_time"]}}</span>
+			<span class="right">#{{thread["post_id"]}}</span>
+		</div>
+		<p class="paragraph">{{thread["body"]}}</p>
 	</div>
-	<div class="meta clear">
-		<span class="left">{{thread["creation_time"]}}</span>
-		<span class="right">{{thread["bump_counter"]}} <a href="{{thread["post_id"]}}"><i class="fa fa-comment active"></i></a></span>
-		<span class="right">#{{thread["post_id"]}} <i class="fa fa-mail-forward non-active"></i></span>
-	</div>
+	<span class="menu footer">{{thread["bump_counter"]}} <a href="{{thread["post_id"]}}"><i class="fa fa-comment active"></i></a></span>
 </article>
 {% endfor %}
 {% endif %}

@@ -15,12 +15,11 @@ class Thread(Post):
     last_bump_time = IntField(required=True)
     bump_counter = IntField(default=0, required=True)
     bump_limit = BooleanField(default=False, required=True)
-    subject = StringField()
 
     @queryset_manager
     def all(doc_cls, queryset):
         return [dict(x.to_mongo()) for x in queryset.order_by('-last_bump_time').only('post_id', 'creation_time',
-            'body', 'subject','image_uri', 'thumb_uri', 'last_bump_time', 'bump_counter', 'bump_limit')]
+            'body', 'image_uri', 'thumb_uri', 'last_bump_time', 'bump_counter', 'bump_limit')]
 
     @queryset_manager
     def oldest(doc_cls, queryset):

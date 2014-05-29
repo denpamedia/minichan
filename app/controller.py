@@ -17,7 +17,7 @@ def get_thread(thread_id):
     }
 
 
-def make_new_thread(subject, body, image):
+def make_new_thread(body, image):
     if model.Thread.objects.count() >= config.NUMBER_OF_THREADS:
         model.Thread.oldest.delete()
 
@@ -29,7 +29,6 @@ def make_new_thread(subject, body, image):
     original_post.post_id = next_counter()
     original_post.creation_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     original_post.body = body
-    original_post.subject = subject
     original_post.image_uri = '/image/{0}'.format(img.img_id)
     original_post.thumb_uri = '/thumb/{0}'.format(img.img_id)
     original_post.last_bump_time = time()

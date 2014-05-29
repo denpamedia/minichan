@@ -4,18 +4,19 @@
 	<title>Minichan</title>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="static/ministyle.css">
+	<link rel="stylesheet" href="static/ministyle-phone.css" />
+	<link rel="stylesheet" media="(min-width: 40.063em)" href="static/ministyle-tablet.css" />
+	<link rel="stylesheet" media="(min-width: 64.063em)" href="static/ministyle-desktop.css" />
 </head>
 <body>
 
 
 <!-- Posting form -->
 <form action="/{{data["original_post"]["post_id"]}}" method="post" enctype="multipart/form-data" id="form">
-	<input disabled type="text" class="input-subject" name="subject" maxlength="50" placeholder="Subject"></input>
-	<textarea type="text" rows="6" name="body" maxlength="3000" required></textarea>
+	<textarea type="text" rows="8" name="body" maxlength="3000" required></textarea>
 	<div class="button-group clear">
 		<input type="file" name="image" class="input-file" required/>
-		<button type="submit">Reply</button>
+		<button type="submit">Make thread</button>
 	</div>
 </form>
 <br><br>
@@ -26,13 +27,13 @@
 <article class="post clear original">
 <a href="{{data["original_post"]["image_uri"]}}" target="_blank"><img class="image" src="{{data["original_post"]["thumb_uri"]}}"></a>
 <div class="text">
-<h3 class="subject">{{data["original_post"]["subject"]}}</h3>
-<p class="par">{{data["original_post"]["body"]}}</p>
-</div>
-<div class="meta clear">
+<div class="menu header clear">
 <span class="left">{{data["original_post"]["creation_time"]}}</span>
-<span class="right">#{{data["original_post"]["post_id"]}} <a href="#"><i class="fa fa-mail-forward"></i></a></span>
+<span class="right">#{{data["original_post"]["post_id"]}}</span>
 </div>
+<p class="paragraph">{{data["original_post"]["body"]}}</p>
+</div>
+<span class="menu footer"><a href="#"><i class="fa fa-mail-forward"></i></a></span>
 </article>
 <!-- Original post end -->
 
@@ -44,12 +45,13 @@
 <article class="post clear">
 <a href="{{reply["image_uri"]}}" target="_blank"><img class="image" src="{{reply["thumb_uri"]}}"></a>
 <div class="text">
-<p class="par">{{reply["body"]}}</p>
-</div>
-<div class="meta clear">
+<div class="menu header clear">
 <span class="left">{{reply["creation_time"]}}</span>
-<span class="right">#{{reply["post_id"]}} <a href="#"><i class="fa fa-mail-forward"></i></a></span>
+<span class="right">#{{reply["post_id"]}}</span>
 </div>
+<p class="paragraph">{{reply["body"]}}</p>
+</div>
+<span class="menu footer"><a href="#"><i class="fa fa-mail-forward"></i></a></span>
 </article>
 {% endfor %}
 {% endif %}
