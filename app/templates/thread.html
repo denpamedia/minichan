@@ -1,63 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Minichan</title>
+	<title>Random</title>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="static/ministyle-phone.css" />
-	<link rel="stylesheet" media="(min-width: 40.063em)" href="static/ministyle-tablet.css" />
-	<link rel="stylesheet" media="(min-width: 64.063em)" href="static/ministyle-desktop.css" />
+	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="static/ministyle.css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 </head>
 <body>
 
-
-<!-- Posting form -->
 <form action="/{{data["original_post"]["post_id"]}}" method="post" enctype="multipart/form-data" id="form">
-	<textarea type="text" rows="8" name="body" maxlength="3000" required></textarea>
+	<input type="text" name="subject" class="input-subject" disabled="disabled" />
+	<textarea type="text" rows="6" name="body" id="body" maxlength="1000" required></textarea>
 	<div class="button-group clear">
-		<input type="file" name="image" class="input-file" required/>
-		<button type="submit">Make thread</button>
+		<div class="file-input-wrapper">
+			<button class="btn-file-input">Image</button>
+			<input type="file" name="file" />
+		</div>
+		<button type="submit" class="submit-button">Reply</button>
 	</div>
 </form>
-<br><br>
-<!-- Posting form end -->
+<br>
 
-
-<!-- Original post -->
-<article class="post clear original">
-<a href="{{data["original_post"]["image_uri"]}}" target="_blank"><img class="image" src="{{data["original_post"]["thumb_uri"]}}"></a>
-<div class="text">
-<div class="menu header clear">
-<span class="left">{{data["original_post"]["creation_time"]}}</span>
-<span class="right">#{{data["original_post"]["post_id"]}}</span>
-</div>
-<p class="paragraph">{{data["original_post"]["body"]}}</p>
-</div>
-<span class="menu footer"><a href="#"><i class="fa fa-mail-forward"></i></a></span>
+<article class="post clear" id="{{data["original_post"]["post_id"]}}">
+	<a href="/image/{{data["original_post"]["image_id"]}}" target="_blank"><img src="/thumb/{{data["original_post"]["image_id"]}}" class="image"></a>
+	<h3 class="header">#{{data["original_post"]["post_id"]}}: Lorem ipsum
+	<span class="post-id"><a href="" name="{{data["original_post"]["post_id"]}}" data-text="&gt;&gt;{{data["original_post"]["post_id"]}}"><i class="fa fa-share"><span class="counter"></span></i></a></span></h3>
+	<p class="paragraph">{{data["original_post"]["body"]}}</p>
 </article>
-<!-- Original post end -->
 
-
-<!-- Comments -->
 <div class="comments">
 {% if "reply_list" in data: %}
 {% for reply in data["reply_list"]: %}
-<article class="post clear">
-<a href="{{reply["image_uri"]}}" target="_blank"><img class="image" src="{{reply["thumb_uri"]}}"></a>
-<div class="text">
-<div class="menu header clear">
-<span class="left">{{reply["creation_time"]}}</span>
-<span class="right">#{{reply["post_id"]}}</span>
-</div>
-<p class="paragraph">{{reply["body"]}}</p>
-</div>
-<span class="menu footer"><a href="#"><i class="fa fa-mail-forward"></i></a></span>
+<article class="post clear" id="{{reply["post_id"]}}">
+{% if "image_id" in reply: %}
+<a href="/image/{{reply["image_id"]}}"><img src="/thumb/{{reply["image_id"]}}" class="image"></a>
+{% endif %}
+<h3 class="header">#{{reply["post_id"]}}
+	<span class="post-id"><a href="" name="{{reply["post_id"]}}" data-text="&gt;&gt;{{reply["post_id"]}}"><i class="fa fa-share"><span class="counter"></span></i></a></span></h3>
+	<p class="paragraph">
+	{% for string in reply["body"].split("\n"): %}
+	{% for word in string.split(" "): %}
+	{% if word.startswith(">>") and word[2:].isdigit:%}
+	<a href="/{{data["original_post"]["post_id"]}}#{{word[2:]}}">&gt;&gt;{{word[2:]}} </a>
+	{% else: %}
+	{{word + " "}}
+	{% endif %}
+	{% endfor %}
+	<br>
+	{% endfor %}
+	</p>
 </article>
 {% endfor %}
 {% endif %}
 </div>
-<!-- Comments end -->
 
-
+  <script>$("a[data-text]").click(function(){
+  var value = $("#body").val();
+   $("#body").val(value+$(this).attr("data-text"));
+   return false;
+})</script>
 </body>
 </html>

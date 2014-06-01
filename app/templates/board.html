@@ -1,47 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Minichan</title>
+	<title>Random</title>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="static/ministyle-phone.css" />
-	<link rel="stylesheet" media="(min-width: 40.063em)" href="static/ministyle-tablet.css" />
-	<link rel="stylesheet" media="(min-width: 64.063em)" href="static/ministyle-desktop.css" />
+	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="static/ministyle.css" />
 </head>
 <body>
 
-
-<!-- Posting form -->
 <form action="/" method="post" enctype="multipart/form-data" id="form">
-	<textarea type="text" rows="8" name="body" maxlength="3000" required></textarea>
+	<input type="text" name="subject" class="input-subject" maxlength="20" />
+	<textarea type="text" rows="6" name="body" maxlength="1000"></textarea>
 	<div class="button-group clear">
-		<input type="file" name="image" class="input-file" required/>
-		<button type="submit">Make thread</button>
+		<div class="file-input-wrapper">
+			<button class="btn-file-input">Image</button>
+			<input type="file" name="file" />
+		</div>
+		<button type="submit" class="submit-button">Make thread</button>
 	</div>
 </form>
-<br><br>
-<!-- Posting form end -->
+<br>
 
-
-<!-- Threads list -->
 {% if data: %}
-{% for thread in data: %}
+{% for thread in data %}
 <article class="post clear">
-	<a href="{{thread["image_uri"]}}" target="_blank"><img class="image" src="{{thread["thumb_uri"]}}"></a>
-	<div class="text">
-		<div class="menu header clear">
-			<span class="left">{{thread["creation_time"]}}</span>
-			<span class="right">#{{thread["post_id"]}}</span>
-		</div>
-		<p class="paragraph">{{thread["body"]}}</p>
-	</div>
-	<span class="menu footer">{{thread["bump_counter"]}} <a href="{{thread["post_id"]}}"><i class="fa fa-comment active"></i></a></span>
+	<a href="/image/{{thread["image_id"]}}" target="_blank"><img src="/thumb/{{thread["image_id"]}}" class="image"></a>
+	<h3 class="header">#{{thread["post_id"]}}: {{thread["subject"]}}
+	<span class="post-id"><a href="{{thread["post_id"]}}"><span class="counter">{{thread["bump_counter"]}} </span><i class="fa fa-comment"></i></a></span></h3>
+	<p class="paragraph">{{thread["body"]}}</p>
 </article>
 {% endfor %}
 {% endif %}
-<!-- Threads list end -->
-
-
-</div>
 </body>
 </html>
