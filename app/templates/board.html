@@ -1,35 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Random</title>
-	<meta charset="utf-8" />
-	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
-	<link rel="stylesheet" href="static/ministyle.css" />
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
+	<script type="text/javascript" src="/static/script.js"></script>
+	<title>Minichan - Random</title>
 </head>
 <body>
+<form method="post" action="/">
+    <input name="subject" type="text" size="51" placeholder="Subject"><br>
+    <textarea name="body" rows="6" cols=50></textarea><br>
+    <button type="submit">Submit</button>
+</form><hr><hr>
 
-<form action="/" method="post" enctype="multipart/form-data" id="form">
-	<input type="text" name="subject" class="input-subject" maxlength="20" />
-	<textarea type="text" rows="6" name="body" maxlength="1000"></textarea>
-	<div class="button-group clear">
-		<div class="file-input-wrapper">
-			<button class="btn-file-input">Image</button>
-			<input type="file" name="file" />
-		</div>
-		<button type="submit" class="submit-button">Make thread</button>
-	</div>
-</form>
-<br>
+<h3>Threads:</h3>
 
-{% if data: %}
-{% for thread in data %}
-<article class="post clear">
-	<a href="/image/{{thread["image_id"]}}" target="_blank"><img src="/thumb/{{thread["image_id"]}}" class="image"></a>
-	<h3 class="header">#{{thread["post_id"]}}: {{thread["subject"]}}
-	<span class="post-id"><a href="{{thread["post_id"]}}"><span class="counter">{{thread["bump_counter"]}} </span><i class="fa fa-comment"></i></a></span></h3>
-	<p class="paragraph">{{thread["body"]}}</p>
-</article>
-{% endfor %}
-{% endif %}
+{% for message in data %}
+    <a href="/{{ message["post_id"] }}">[Reply]</a><br>
+    <strong>Subject: </strong>{{ message["subject"] }}<br>
+    <strong>Post ID: </strong>{{ message["post_id"] }}<br>
+    <strong>Bump counter: </strong>{{ message["bump_counter"] }}<br>
+    <strong>Creation time: </strong>{{ message["creation_time"] }}<br>
+    <strong>Bump time: </strong>{{ message["bump_time"] }}<br>
+    <strong>Bump limit: </strong>{{ message["bump_limit"] }}<br>
+    <strong>Body: </strong>{% for line in message["body"].split("\\n") %}
+        {{ line }}<br>
+    {% end %}<hr>
+{% end %}
 </body>
 </html>

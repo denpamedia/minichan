@@ -1,14 +1,29 @@
-from flask import Flask
-from mongoengine import *
+import tornado.web
+import motor
+import pymongo
+import tornado.template
 
-from app.config import *
-from app.model import *
+import app.handlers
 
 
-connect("b_test")
+with pymongo.MongoClient() as client:
+    db = client.test
+    counters = db.counters
+    if not counters.find_one({'board_id': 'b'}):
+        counters.insert({'board_id': 'b', 'counter': 1})
 
-Counter(name='post_counter').save()
 
-minichan = Flask(__name__)
+db = motor.MotorClient().test
 
-import app.view
+template_loader = tornado.template.Loader('app/templates')
+
+
+minichan = tornado.web.Application(
+    [
+        (r'/', app.handlers.BoardHandler),
+        (r'/([0-9]+)', app.handlers.ThreadHandler)
+    ],
+    db=db,
+    static_path='app/static',
+    debug=True
+)

@@ -1,64 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Random</title>
-	<meta charset="utf-8" />
-	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
-	<link rel="stylesheet" href="static/ministyle.css" />
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <meta charset="utf-8">
+	<title>Minichan</title>
 </head>
 <body>
+<form method="post" action="/{{ data["original_post"]["post_id"] }}">
+    <input name="subject" type="text" size="51" placeholder="Subject"><br>
+    <textarea name="body" rows="6" cols=50 required></textarea><br>
+    <button type="submit">Submit</button>
+</form><hr><hr>
 
-<form action="/{{data["original_post"]["post_id"]}}" method="post" enctype="multipart/form-data" id="form">
-	<input type="text" name="subject" class="input-subject" disabled="disabled" />
-	<textarea type="text" rows="6" name="body" id="body" maxlength="1000" required></textarea>
-	<div class="button-group clear">
-		<div class="file-input-wrapper">
-			<button class="btn-file-input">Image</button>
-			<input type="file" name="file" />
-		</div>
-		<button type="submit" class="submit-button">Reply</button>
-	</div>
-</form>
-<br>
+<h3>Original Post:</h3>
 
-<article class="post clear" id="{{data["original_post"]["post_id"]}}">
-	<a href="/image/{{data["original_post"]["image_id"]}}" target="_blank"><img src="/thumb/{{data["original_post"]["image_id"]}}" class="image"></a>
-	<h3 class="header">#{{data["original_post"]["post_id"]}}: Lorem ipsum
-	<span class="post-id"><a href="" name="{{data["original_post"]["post_id"]}}" data-text="&gt;&gt;{{data["original_post"]["post_id"]}}"><i class="fa fa-share"><span class="counter"></span></i></a></span></h3>
-	<p class="paragraph">{{data["original_post"]["body"]}}</p>
-</article>
+    <strong>Subject: </strong>{{ data["original_post"]["subject"] }}<br>
+    <strong>Post ID: </strong>{{ data["original_post"]["post_id"] }}<br>
+    <strong>Bump counter: </strong>{{ data["original_post"]["bump_counter"] }}<br>
+    <strong>Creation time: </strong>{{ data["original_post"]["creation_time"] }}<br>
+    <strong>Bump time: </strong>{{ data["original_post"]["bump_time"] }}<br>
+    <strong>Bump limit: </strong>{{ data["original_post"]["bump_limit"] }}<br>
+    <strong>Body: </strong>{% for line in data["original_post"]["body"].split("\\n") %}
+        {{ line }}<br>
+    {% end %}
 
-<div class="comments">
-{% if "reply_list" in data: %}
-{% for reply in data["reply_list"]: %}
-<article class="post clear" id="{{reply["post_id"]}}">
-{% if "image_id" in reply: %}
-<a href="/image/{{reply["image_id"]}}"><img src="/thumb/{{reply["image_id"]}}" class="image"></a>
-{% endif %}
-<h3 class="header">#{{reply["post_id"]}}
-	<span class="post-id"><a href="" name="{{reply["post_id"]}}" data-text="&gt;&gt;{{reply["post_id"]}}"><i class="fa fa-share"><span class="counter"></span></i></a></span></h3>
-	<p class="paragraph">
-	{% for string in reply["body"].split("\n"): %}
-	{% for word in string.split(" "): %}
-	{% if word.startswith(">>") and word[2:].isdigit:%}
-	<a href="/{{data["original_post"]["post_id"]}}#{{word[2:]}}">&gt;&gt;{{word[2:]}} </a>
-	{% else: %}
-	{{word + " "}}
-	{% endif %}
-	{% endfor %}
-	<br>
-	{% endfor %}
-	</p>
-</article>
-{% endfor %}
-{% endif %}
-</div>
+<hr><hr><br>
 
-  <script>$("a[data-text]").click(function(){
-  var value = $("#body").val();
-   $("#body").val(value+$(this).attr("data-text"));
-   return false;
-})</script>
+<h3>Replies:</h3>
+
+{% for message in data["replies"] %}
+    <strong>Subject: </strong>{{ message["subject"] }}<br>
+    <strong>Post ID: </strong>{{ message["post_id"] }}<br>
+    <strong>Thread link: </strong>{{ message["thread_link"] }}<br>
+    <strong>Creation time: </strong>{{ message["creation_time"] }}<br>
+    <strong>Body: </strong>{% for line in message["body"].split("\\n") %}
+        {{ line }}<br>
+    {% end %}<hr>
+{% end %}
+
 </body>
 </html>
