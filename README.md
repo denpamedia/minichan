@@ -1,4 +1,4 @@
 minichan
 ========
 
-Anonymous imageboard written with Python and Flask
+Lightweight asynchronous imageboard
